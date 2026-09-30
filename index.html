@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Mencocokkan Gambar</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+            min-height: 100vh;
+            padding: 30px 15px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        .info {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .info-box {
+            background: #f2f4f7;
+            padding: 12px 25px;
+            border-radius: 12px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .game-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .column {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        .column h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #444;
+        }
+
+        .images {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .image-item {
+            background: white;
+            border: 3px solid #ddd;
+            border-radius: 15px;
+            padding: 10px;
+            height: 160px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: grab;
+            transition: 0.3s;
+        }
+
+        .image-item:hover {
+            transform: translateY(-5px);
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.12);
+        }
+
+        .image-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            pointer-events: none;
+            border-radius: 10px;
+        }
+
+        .drop-zone {
+            background: white;
+            border: 3px dashed #bbb;
+            border-radius: 15px;
+            height: 160px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .drop-zone span {
+            color: #999;
+            font-size: 14px;
+        }
+
+        .drop-zone.drag-over {
+            border-color: #667eea;
+            background: #eef1ff;
+            transform: scale(1.02);
+        }
+
+        .drop-zone.correct {
+            border: 3px solid #28a745;
+            background: #eaffee;
+        }
+
+        .drop-zone.wrong {
+            border: 3px solid #dc3545;
+            background: #ffecec;
+            animation: shake 0.4s;
+        }
+
+        .drop-zone img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 10px;
+            border-radius: 12px;
+        }
+
+        .dragging {
+            opacity: 0.5;
+        }
+
+        .matched {
+            opacity: 0.4;
+            cursor: default;
+            border-color: #28a745;
+        }
+
+        .buttons {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        button {
+            border: none;
+            background: #667eea;
+            color: white;
+            padding: 13px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #5568d9;
+            transform: translateY(-2px);
+        }
+
+        .message {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            min-height: 30px;
+        }
+
+        .success {
+            color: #28a745;
+        }
+
+        .error {
+            color: #dc3545;
+        }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            50% { transform: translateX(8px); }
+            75% { transform: translateX(-8px); }
+            100% { transform: translateX(0); }
+        }
+
+        @media (max-width: 700px) {
+            .container {
+                padding: 20px;
+            }
+
+            .game-area {
+                grid-template-columns: 1fr;
+            }
+
+            .images {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .image-item,
+            .drop-zone {
+                height: 130px;
+            }
+
+            h1 {
+                font-size: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🎯 Mencocokkan Gambar</h1>
+    <p class="subtitle">
+        Seret gambar ke pasangan yang sesuai!
+    </p>
+
+    <div class="game-area">
+
+        <!-- GAMBAR -->
+        <div class="column">
+
+            <h2>🖼️ Gambar</h2>
+
+            <div class="images" id="imageContainer">
+
+                <div class="image-item"
+                     draggable="true"
+                     data-id="kucing">
+                    <img src="OIP.jfif">
+                </div>
+
+                <div class="image-item"
+                     draggable="true"
+                     data-id="anjing">
+                    <img src="images.jfif">
+                </div>
+
+                <div class="image-item"
+                     draggable="true"
+                     data-id="apel">
+                    <img src="OIP (1).jfif">
+                </div>
+
+                <div class="image-item"
+                     draggable="true"
+                     data-id="pisang">
+                    <img src="OIP (2).jfif">
+                </div>
+
+                <div class="image-item"
+                     draggable="true"
+                     data-id="jeruk">
+                    <img src="OIP (3).jfif">
+                </div>
+
+                <div class="image-item"
+                     draggable="true"
+                     data-id="semangka">
+                    <img src="OIP (4).jfif">
+                </div>
+
+                <div class="image-item"
+                     draggable="true"
+                     data-id="kucing">
+                    <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400">
+                </div>
+
+                <div class="image-item"
+                     draggable="true"
+                     data-id="anjing">
+                    <img src="https://images.unsplash.com/photo-1552053831-71594a27632d?w=400">
+                </div>
+
+                <div class="image-item"
+                     draggable="true"
+                     data-id="apel">
+                    <img src="https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=400">
+                </div>
+
+                <div class="image-item"
+                     draggable="true"
+                     data-id="pisang">
+                    <img src="https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=400">
+                </div>
+
+                <div class="image-item"
+                     draggable="true"
+                     data-id="apel">
+                    <img src="https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=400">
+                </div>
+
+                <div class="image-item"
+                     draggable="true"
+                     data-id="pisang">
+                    <img src="https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=400">
+                </div>
+
+                <div class="image-item"
+                     draggable="true"
+                     data-id="apel">
+                    <img src="https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=400">
+                </div>
+
+                <div class="image-item"
+                     draggable="true"
+                     data-id="pisang">
+                    <img src="https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=400">
+                </div>
+
+                <div class="image-item"
+                     draggable="true"
+                     data-id="apel">
+                    <img src="https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=400">
+                </div>
+
+                <div class="image-item"
+                     draggable="true"
+                     data-id="apel">
+                    <img src="https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=400">
+                </div>
+
+                <div class="image-item"
+                     draggable="true"
+                     data-id="pisang">
+                    <img src="https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=400">
+                </div>
+
+                <div class="image-item"
+                     draggable="true"
+                     data-id="apel">
+                    <img src="https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=400">
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PASANGAN -->
+        <div class="column">
+
+    <h2>🎯 Match the Taste</h2>
+
+    <div class="drop-zone" data-id="kucing">
+        <span>🍬 Sweet</span>
+    </div>
+
+    <div class="drop-zone" data-id="anjing">
+        <span>🍋 Sour</span>
+    </div>
+
+    <div class="drop-zone" data-id="apel">
+        <span>🧂 Salty</span>
+    </div>
+
+    <div class="drop-zone" data-id="pisang">
+        <span>🍫 Bitter</span>
+    </div>
+
+    <div class="drop-zone" data-id="jeruk">
+        <span>🌶️ Spicy</span>
+    </div>
+
+    <div class="drop-zone" data-id="umami">
+        <span>🍜 Savory / Umami</span>
+    </div>
+
+</div>
+
+    </div>
+
+
+    <div class="message" id="message"></div>
+
+    <div class="buttons">
+        <button onclick="resetGame()">
+            🔄 Mulai Lagi
+        </button>
+    </div>
+
+</div>
+
+
+<script>
+
+    let draggedItem = null;
+
+    let score = 0;
+    let attempt = 0;
+    let correct = 0;
+
+    const imageItems = document.querySelectorAll(".image-item");
+    const dropZones = document.querySelectorAll(".drop-zone");
+
+    const scoreText = document.getElementById("score");
+    const attemptText = document.getElementById("attempt");
+    const correctText = document.getElementById("correct");
+    const message = document.getElementById("message");
+
+
+    /* =========================
+       DRAG START
+    ========================= */
+
+    imageItems.forEach(item => {
+
+        item.addEventListener("dragstart", function() {
+
+            if (item.classList.contains("matched")) {
+                return;
+            }
+
+            draggedItem = item;
+
+            setTimeout(() => {
+                item.classList.add("dragging");
+            }, 0);
+
+        });
+
+
+        item.addEventListener("dragend", function() {
+
+            item.classList.remove("dragging");
+
+        });
+
+    });
+
+
+    /* =========================
+       DROP ZONE
+    ========================= */
+
+    dropZones.forEach(zone => {
+
+        zone.addEventListener("dragover", function(e) {
+
+            e.preventDefault();
+
+            if (zone.classList.contains("correct")) {
+                return;
+            }
+
+            zone.classList.add("drag-over");
+
+        });
+
+
+        zone.addEventListener("dragleave", function() {
+
+            zone.classList.remove("drag-over");
+
+        });
+
+
+        zone.addEventListener("drop", function(e) {
+
+            e.preventDefault();
+
+            zone.classList.remove("drag-over");
+
+            if (!draggedItem) {
+                return;
+            }
+
+            if (zone.classList.contains("correct")) {
+                return;
+            }
+
+            attempt++;
+
+            attemptText.textContent = attempt;
+
+
+            const imageID = draggedItem.dataset.id;
+            const targetID = zone.dataset.id;
+
+
+            /* =========================
+               JIKA BENAR
+            ========================= */
+
+            if (imageID === targetID) {
+
+                score += 10;
+                correct++;
+
+                scoreText.textContent = score;
+                correctText.textContent = correct;
+
+                zone.innerHTML = "";
+
+                const clonedImage = draggedItem.querySelector("img").cloneNode(true);
+
+                zone.appendChild(clonedImage);
+
+                zone.classList.add("correct");
+
+                draggedItem.classList.add("matched");
+
+                draggedItem.draggable = false;
+
+                message.textContent = "✅ Benar! Hebat!";
+                message.className = "message success";
+
+
+                /* CEK SELESAI */
+
+                if (correct === 6) {
+
+                    setTimeout(() => {
+
+                        message.innerHTML =
+                            "🎉 SELAMAT! Semua gambar berhasil dicocokkan! 🎉";
+
+                    }, 500);
+
+                }
+
+            }
+
+            /* =========================
+               JIKA SALAH
+            ========================= */
+
+            else {
+
+                score -= 2;
+
+                if (score < 0) {
+                    score = 0;
+                }
+
+                scoreText.textContent = score;
+
+                zone.classList.add("wrong");
+
+                message.textContent =
+                    "❌ Belum tepat, coba lagi!";
+
+                message.className = "message error";
+
+
+                setTimeout(() => {
+
+                    zone.classList.remove("wrong");
+
+                }, 500);
+
+            }
+
+            draggedItem = null;
+
+        });
+
+    });
+
+
+    /* =========================
+       ACAK GAMBAR
+    ========================= */
+
+    function shuffleImages() {
+
+        const container =
+            document.getElementById("imageContainer");
+
+        const items =
+            Array.from(container.children);
+
+        items.sort(() => Math.random() - 0.5);
+
+        items.forEach(item => {
+
+            container.appendChild(item);
+
+        });
+
+    }
+
+
+    /* =========================
+       RESET GAME
+    ========================= */
+
+    function resetGame() {
+
+        score = 0;
+        attempt = 0;
+        correct = 0;
+
+        scoreText.textContent = "0";
+        attemptText.textContent = "0";
+        correctText.textContent = "0";
+
+        message.textContent = "";
+        message.className = "message";
+
+
+        /* Reset gambar */
+
+        imageItems.forEach(item => {
+
+            item.classList.remove("matched");
+
+            item.draggable = true;
+
+        });
+
+
+        /* Reset target */
+
+        dropZones.forEach(zone => {
+
+            zone.classList.remove("correct");
+            zone.classList.remove("wrong");
+
+            const id = zone.dataset.id;
+
+            let emoji = "";
+
+            if (id === "kucing") emoji = "🐱";
+            if (id === "anjing") emoji = "🐶";
+            if (id === "apel") emoji = "🍎";
+            if (id === "pisang") emoji = "🍌";
+            if (id === "jeruk") emoji = "🍊";
+            if (id === "semangka") emoji = "🍉";
+
+            zone.innerHTML =
+                `<span>${emoji} Pasangan ${id.charAt(0).toUpperCase() + id.slice(1)}</span>`;
+
+        });
+
+
+        shuffleImages();
+
+    }
+
+
+    /* Acak saat pertama kali */
+
+    shuffleImages();
+
+</script>
+
+</body>
+</html>
+```
