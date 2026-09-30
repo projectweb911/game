@@ -1,9 +1,10 @@
+```html
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Mencocokkan Gambar</title>
+    <title>Game Mencocokkan Rasa</title>
 
     <style>
         * {
@@ -38,22 +39,6 @@
             text-align: center;
             color: #666;
             margin-bottom: 25px;
-        }
-
-        .info {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            margin-bottom: 30px;
-        }
-
-        .info-box {
-            background: #f2f4f7;
-            padding: 12px 25px;
-            border-radius: 12px;
-            font-weight: bold;
-            color: #333;
         }
 
         .game-area {
@@ -111,18 +96,18 @@
             background: white;
             border: 3px dashed #bbb;
             border-radius: 15px;
-            height: 160px;
+            min-height: 160px;
             margin-bottom: 15px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            padding: 15px;
             transition: 0.3s;
-            position: relative;
         }
 
-        .drop-zone span {
-            color: #999;
-            font-size: 14px;
+        .drop-zone-title {
+            text-align: center;
+            color: #666;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
         }
 
         .drop-zone.drag-over {
@@ -132,22 +117,30 @@
         }
 
         .drop-zone.correct {
-            border: 3px solid #28a745;
+            border-color: #28a745;
             background: #eaffee;
         }
 
         .drop-zone.wrong {
-            border: 3px solid #dc3545;
+            border-color: #dc3545;
             background: #ffecec;
             animation: shake 0.4s;
         }
 
-        .drop-zone img {
+        .matched-images {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .matched-images img {
             width: 100%;
-            height: 100%;
+            height: 90px;
             object-fit: contain;
-            padding: 10px;
-            border-radius: 12px;
+            background: white;
+            border-radius: 10px;
+            padding: 5px;
+            border: 2px solid #28a745;
         }
 
         .dragging {
@@ -160,9 +153,25 @@
             border-color: #28a745;
         }
 
+        .message {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 20px;
+            font-weight: bold;
+            min-height: 30px;
+        }
+
+        .success {
+            color: #28a745;
+        }
+
+        .error {
+            color: #dc3545;
+        }
+
         .buttons {
             text-align: center;
-            margin-top: 30px;
+            margin-top: 20px;
         }
 
         button {
@@ -182,31 +191,31 @@
             transform: translateY(-2px);
         }
 
-        .message {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 20px;
-            font-weight: bold;
-            min-height: 30px;
-        }
-
-        .success {
-            color: #28a745;
-        }
-
-        .error {
-            color: #dc3545;
-        }
-
         @keyframes shake {
-            0% { transform: translateX(0); }
-            25% { transform: translateX(-8px); }
-            50% { transform: translateX(8px); }
-            75% { transform: translateX(-8px); }
-            100% { transform: translateX(0); }
+
+            0% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-8px);
+            }
+
+            50% {
+                transform: translateX(8px);
+            }
+
+            75% {
+                transform: translateX(-8px);
+            }
+
+            100% {
+                transform: translateX(0);
+            }
         }
 
         @media (max-width: 700px) {
+
             .container {
                 padding: 20px;
             }
@@ -219,9 +228,12 @@
                 grid-template-columns: repeat(2, 1fr);
             }
 
-            .image-item,
-            .drop-zone {
+            .image-item {
                 height: 130px;
+            }
+
+            .matched-images img {
+                height: 80px;
             }
 
             h1 {
@@ -235,126 +247,203 @@
 
 <div class="container">
 
-    <h1>🎯 Mencocokkan Gambar</h1>
+    <h1>🎯 Mencocokkan Rasa</h1>
+
     <p class="subtitle">
-        Seret gambar ke pasangan yang sesuai!
+        Seret gambar makanan ke kategori rasa yang sesuai!
     </p>
+
 
     <div class="game-area">
 
-        <!-- GAMBAR -->
+
+        <!-- =========================
+             GAMBAR
+        ========================== -->
+
         <div class="column">
 
-            <h2>🖼️ Gambar</h2>
+            <h2>🖼️ Gambar Makanan</h2>
 
             <div class="images" id="imageContainer">
 
+
+                <!-- SWEET -->
+
                 <div class="image-item"
                      draggable="true"
-                     data-id="kucing">
+                     data-id="sweet1">
+
                     <img src="OIP.jfif">
+
                 </div>
+
 
                 <div class="image-item"
                      draggable="true"
-                     data-id="anjing">
+                     data-id="sweet2">
+
                     <img src="images.jfif">
+
                 </div>
+
 
                 <div class="image-item"
                      draggable="true"
-                     data-id="apel">
+                     data-id="sweet3">
+
                     <img src="OIP (1).jfif">
+
                 </div>
+
+
+
+                <!-- SOUR -->
 
                 <div class="image-item"
                      draggable="true"
-                     data-id="pisang">
+                     data-id="sour1">
+
                     <img src="OIP (2).jfif">
+
                 </div>
+
 
                 <div class="image-item"
                      draggable="true"
-                     data-id="jeruk">
+                     data-id="sour2">
+
                     <img src="OIP (3).jfif">
+
                 </div>
+
 
                 <div class="image-item"
                      draggable="true"
-                     data-id="semangka">
+                     data-id="sour3">
+
                     <img src="OIP (4).jfif">
+
                 </div>
+
+
+
+                <!-- SALTY -->
 
                 <div class="image-item"
                      draggable="true"
-                     data-id="kucing">
-                    <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400">
+                     data-id="salty1">
+
+                    <img src="OIP1.jfif">
+
                 </div>
+
 
                 <div class="image-item"
                      draggable="true"
-                     data-id="anjing">
-                    <img src="https://images.unsplash.com/photo-1552053831-71594a27632d?w=400">
+                     data-id="salty2">
+
+                    <img src="OIP2.jfif">
+
                 </div>
+
 
                 <div class="image-item"
                      draggable="true"
-                     data-id="apel">
-                    <img src="https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=400">
+                     data-id="salty3">
+
+                    <img src="OIP (5).jfif">
+
                 </div>
+
+
+
+                <!-- BITTER -->
 
                 <div class="image-item"
                      draggable="true"
-                     data-id="pisang">
-                    <img src="https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=400">
+                     data-id="bitter1">
+
+                    <img src="OIP (6).jfif">
+
                 </div>
+
 
                 <div class="image-item"
                      draggable="true"
-                     data-id="apel">
-                    <img src="https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=400">
+                     data-id="bitter2">
+
+                    <img src="OIP (7).jfif">
+
                 </div>
+
 
                 <div class="image-item"
                      draggable="true"
-                     data-id="pisang">
-                    <img src="https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=400">
+                     data-id="bitter3">
+
+                    <img src="OIP (8).jfif">
+
                 </div>
+
+
+
+                <!-- SPICY -->
 
                 <div class="image-item"
                      draggable="true"
-                     data-id="apel">
-                    <img src="https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=400">
+                     data-id="spicy1">
+
+                    <img src="OIP (9).jfif">
+
                 </div>
+
 
                 <div class="image-item"
                      draggable="true"
-                     data-id="pisang">
-                    <img src="https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=400">
+                     data-id="spicy2">
+
+                    <img src="OIP (10).jfif">
+
                 </div>
+
 
                 <div class="image-item"
                      draggable="true"
-                     data-id="apel">
-                    <img src="https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=400">
+                     data-id="spicy3">
+
+                    <img src="OIP (11).jfif">
+
                 </div>
+
+
+
+                <!-- UMAMI -->
 
                 <div class="image-item"
                      draggable="true"
-                     data-id="apel">
-                    <img src="https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=400">
+                     data-id="umami1">
+
+                    <img src="OIP (12).jfif">
+
                 </div>
+
 
                 <div class="image-item"
                      draggable="true"
-                     data-id="pisang">
-                    <img src="https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=400">
+                     data-id="umami2">
+
+                    <img src="OIP (13).jfif">
+
                 </div>
+
 
                 <div class="image-item"
                      draggable="true"
-                     data-id="apel">
-                    <img src="https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=400">
+                     data-id="umami3">
+
+                    <img src="OIP (14).jfif">
+
                 </div>
 
             </div>
@@ -362,84 +451,159 @@
         </div>
 
 
-        <!-- PASANGAN -->
+
+        <!-- =========================
+             KATEGORI RASA
+        ========================== -->
+
         <div class="column">
 
-    <h2>🎯 Match the Taste</h2>
+            <h2>🎯 Match the Taste</h2>
 
-    <div class="drop-zone" data-id="kucing">
-        <span>🍬 Sweet</span>
+
+            <div class="drop-zone"
+                 data-id="sweet">
+
+                <div class="drop-zone-title">
+                    🍬 Sweet
+                </div>
+
+                <div class="matched-images"></div>
+
+            </div>
+
+
+            <div class="drop-zone"
+                 data-id="sour">
+
+                <div class="drop-zone-title">
+                    🍋 Sour
+                </div>
+
+                <div class="matched-images"></div>
+
+            </div>
+
+
+            <div class="drop-zone"
+                 data-id="salty">
+
+                <div class="drop-zone-title">
+                    🧂 Salty
+                </div>
+
+                <div class="matched-images"></div>
+
+            </div>
+
+
+            <div class="drop-zone"
+                 data-id="bitter">
+
+                <div class="drop-zone-title">
+                    🍫 Bitter
+                </div>
+
+                <div class="matched-images"></div>
+
+            </div>
+
+
+            <div class="drop-zone"
+                 data-id="spicy">
+
+                <div class="drop-zone-title">
+                    🌶️ Spicy
+                </div>
+
+                <div class="matched-images"></div>
+
+            </div>
+
+
+            <div class="drop-zone"
+                 data-id="umami">
+
+                <div class="drop-zone-title">
+                    🍜 Savory / Umami
+                </div>
+
+                <div class="matched-images"></div>
+
+            </div>
+
+        </div>
+
     </div>
 
-    <div class="drop-zone" data-id="anjing">
-        <span>🍋 Sour</span>
-    </div>
 
-    <div class="drop-zone" data-id="apel">
-        <span>🧂 Salty</span>
-    </div>
 
-    <div class="drop-zone" data-id="pisang">
-        <span>🍫 Bitter</span>
-    </div>
-
-    <div class="drop-zone" data-id="jeruk">
-        <span>🌶️ Spicy</span>
-    </div>
-
-    <div class="drop-zone" data-id="umami">
-        <span>🍜 Savory / Umami</span>
-    </div>
-
-</div>
-
-    </div>
-
+    <!-- =========================
+         PESAN
+    ========================== -->
 
     <div class="message" id="message"></div>
 
+
+    <!-- =========================
+         BUTTON
+    ========================== -->
+
     <div class="buttons">
+
         <button onclick="resetGame()">
             🔄 Mulai Lagi
         </button>
+
     </div>
 
 </div>
+
 
 
 <script>
 
     let draggedItem = null;
 
-    let score = 0;
-    let attempt = 0;
     let correct = 0;
 
-    const imageItems = document.querySelectorAll(".image-item");
-    const dropZones = document.querySelectorAll(".drop-zone");
 
-    const scoreText = document.getElementById("score");
-    const attemptText = document.getElementById("attempt");
-    const correctText = document.getElementById("correct");
-    const message = document.getElementById("message");
+    const imageItems =
+        document.querySelectorAll(".image-item");
+
+    const dropZones =
+        document.querySelectorAll(".drop-zone");
+
+    const message =
+        document.getElementById("message");
 
 
-    /* =========================
-       DRAG START
-    ========================= */
+
+    /*
+    =========================
+    DRAG START
+    =========================
+    */
 
     imageItems.forEach(item => {
 
-        item.addEventListener("dragstart", function() {
+        item.addEventListener("dragstart", function(e) {
 
             if (item.classList.contains("matched")) {
+
+                e.preventDefault();
+
                 return;
             }
 
+
             draggedItem = item;
 
+
             setTimeout(() => {
+
                 item.classList.add("dragging");
+
             }, 0);
 
         });
@@ -454,23 +618,40 @@
     });
 
 
-    /* =========================
-       DROP ZONE
-    ========================= */
+
+    /*
+    =========================
+    DROP ZONE
+    =========================
+    */
 
     dropZones.forEach(zone => {
+
 
         zone.addEventListener("dragover", function(e) {
 
             e.preventDefault();
 
-            if (zone.classList.contains("correct")) {
+
+            const matchedImages =
+                zone.querySelector(".matched-images");
+
+
+            const currentCount =
+                matchedImages.querySelectorAll("img").length;
+
+
+            if (currentCount >= 3) {
+
                 return;
+
             }
+
 
             zone.classList.add("drag-over");
 
         });
+
 
 
         zone.addEventListener("dragleave", function() {
@@ -480,60 +661,139 @@
         });
 
 
+
         zone.addEventListener("drop", function(e) {
 
             e.preventDefault();
 
+
             zone.classList.remove("drag-over");
 
+
             if (!draggedItem) {
+
                 return;
+
             }
 
-            if (zone.classList.contains("correct")) {
+
+            const matchedImages =
+                zone.querySelector(".matched-images");
+
+
+            const currentCount =
+                matchedImages.querySelectorAll("img").length;
+
+
+            /*
+            Maksimal 3 gambar
+            */
+
+            if (currentCount >= 3) {
+
+                message.textContent =
+                    "⚠️ Kategori ini sudah penuh!";
+
+                message.className =
+                    "message error";
+
+
+                draggedItem = null;
+
                 return;
+
             }
 
-            attempt++;
-
-            attemptText.textContent = attempt;
 
 
-            const imageID = draggedItem.dataset.id;
-            const targetID = zone.dataset.id;
+            /*
+            Ambil ID
+            */
+
+            const imageID =
+                draggedItem.dataset.id;
 
 
-            /* =========================
-               JIKA BENAR
-            ========================= */
+            const targetID =
+                zone.dataset.id;
 
-            if (imageID === targetID) {
 
-                score += 10;
+
+            /*
+            sweet1 → sweet
+            sour2 → sour
+            */
+
+            const imageTaste =
+                imageID.replace(/[0-9]/g, "");
+
+
+
+            /*
+            =========================
+            BENAR
+            =========================
+            */
+
+            if (imageTaste === targetID) {
+
+
                 correct++;
 
-                scoreText.textContent = score;
-                correctText.textContent = correct;
 
-                zone.innerHTML = "";
-
-                const clonedImage = draggedItem.querySelector("img").cloneNode(true);
-
-                zone.appendChild(clonedImage);
-
-                zone.classList.add("correct");
-
-                draggedItem.classList.add("matched");
-
-                draggedItem.draggable = false;
-
-                message.textContent = "✅ Benar! Hebat!";
-                message.className = "message success";
+                const clonedImage =
+                    draggedItem
+                    .querySelector("img")
+                    .cloneNode(true);
 
 
-                /* CEK SELESAI */
+                matchedImages.appendChild(
+                    clonedImage
+                );
 
-                if (correct === 6) {
+
+                draggedItem.classList.add(
+                    "matched"
+                );
+
+
+                draggedItem.draggable =
+                    false;
+
+
+
+                /*
+                Jika kategori sudah
+                mendapatkan 3 gambar
+                */
+
+                if (
+                    matchedImages
+                    .querySelectorAll("img")
+                    .length === 3
+                ) {
+
+                    zone.classList.add(
+                        "correct"
+                    );
+
+                }
+
+
+                message.textContent =
+                    "✅ Benar! Hebat!";
+
+
+                message.className =
+                    "message success";
+
+
+
+                /*
+                Semua selesai
+                */
+
+                if (correct === 18) {
 
                     setTimeout(() => {
 
@@ -546,35 +806,40 @@
 
             }
 
-            /* =========================
-               JIKA SALAH
-            ========================= */
+
+
+            /*
+            =========================
+            SALAH
+            =========================
+            */
 
             else {
 
-                score -= 2;
 
-                if (score < 0) {
-                    score = 0;
-                }
+                zone.classList.add(
+                    "wrong"
+                );
 
-                scoreText.textContent = score;
-
-                zone.classList.add("wrong");
 
                 message.textContent =
                     "❌ Belum tepat, coba lagi!";
 
-                message.className = "message error";
+
+                message.className =
+                    "message error";
 
 
                 setTimeout(() => {
 
-                    zone.classList.remove("wrong");
+                    zone.classList.remove(
+                        "wrong"
+                    );
 
                 }, 500);
 
             }
+
 
             draggedItem = null;
 
@@ -583,19 +848,31 @@
     });
 
 
-    /* =========================
-       ACAK GAMBAR
-    ========================= */
+
+    /*
+    =========================
+    ACAK GAMBAR
+    =========================
+    */
 
     function shuffleImages() {
 
         const container =
-            document.getElementById("imageContainer");
+            document.getElementById(
+                "imageContainer"
+            );
+
 
         const items =
-            Array.from(container.children);
+            Array.from(
+                container.children
+            );
 
-        items.sort(() => Math.random() - 0.5);
+
+        items.sort(
+            () => Math.random() - 0.5
+        );
+
 
         items.forEach(item => {
 
@@ -606,55 +883,80 @@
     }
 
 
-    /* =========================
-       RESET GAME
-    ========================= */
+
+    /*
+    =========================
+    RESET GAME
+    =========================
+    */
 
     function resetGame() {
 
-        score = 0;
-        attempt = 0;
+
         correct = 0;
 
-        scoreText.textContent = "0";
-        attemptText.textContent = "0";
-        correctText.textContent = "0";
 
-        message.textContent = "";
-        message.className = "message";
+        message.textContent =
+            "";
+
+        message.className =
+            "message";
 
 
-        /* Reset gambar */
+
+        /*
+        Reset gambar
+        */
 
         imageItems.forEach(item => {
 
-            item.classList.remove("matched");
+            item.classList.remove(
+                "matched"
+            );
 
-            item.draggable = true;
+
+            item.classList.remove(
+                "dragging"
+            );
+
+
+            item.draggable =
+                true;
 
         });
 
 
-        /* Reset target */
+
+        /*
+        Reset kategori
+        */
 
         dropZones.forEach(zone => {
 
-            zone.classList.remove("correct");
-            zone.classList.remove("wrong");
 
-            const id = zone.dataset.id;
+            zone.classList.remove(
+                "correct"
+            );
 
-            let emoji = "";
 
-            if (id === "kucing") emoji = "🐱";
-            if (id === "anjing") emoji = "🐶";
-            if (id === "apel") emoji = "🍎";
-            if (id === "pisang") emoji = "🍌";
-            if (id === "jeruk") emoji = "🍊";
-            if (id === "semangka") emoji = "🍉";
+            zone.classList.remove(
+                "wrong"
+            );
 
-            zone.innerHTML =
-                `<span>${emoji} Pasangan ${id.charAt(0).toUpperCase() + id.slice(1)}</span>`;
+
+            zone.classList.remove(
+                "drag-over"
+            );
+
+
+            const matchedImages =
+                zone.querySelector(
+                    ".matched-images"
+                );
+
+
+            matchedImages.innerHTML =
+                "";
 
         });
 
@@ -664,7 +966,12 @@
     }
 
 
-    /* Acak saat pertama kali */
+
+    /*
+    =========================
+    ACAK SAAT MULAI
+    =========================
+    */
 
     shuffleImages();
 
